@@ -20,6 +20,7 @@ defmodule Resuelve.Helpers.JugadorHelper do
   end
 
   #Separar funciones en archivos separados.
+  @spec get_level( map() ) :: integer()
   def get_level( jugador = %Jugador{nivel: nivel} ) when nivel != "" do
     #IO.puts("El jugador es nivel #{jugador.nivel}")
     jugador.nivel
@@ -48,16 +49,10 @@ defmodule Resuelve.Helpers.JugadorHelper do
     0
   end
 
-
-  def calcula_alcance_equipo( {} ) do
-
-  end
-
-
-  def calcula_alcance_individual( %Jugador{goles_min: goles_min, goles: goles } ) when goles > goles_min do
+  def calcula_alcance_individual( %Jugador{goles_minimos: goles_min, goles: goles } ) when goles > goles_min do
     100
   end
-  def calcula_alcance_individual( %Jugador{goles_min: goles_min, goles: goles } ) when goles < goles_min and goles > 0 do
+  def calcula_alcance_individual( %Jugador{goles_minimos: goles_min, goles: goles } ) when goles < goles_min and goles > 0 do
     (goles * 100) / goles_min
   end
   def calcula_alcance_individual(%Jugador{} ) do
@@ -75,16 +70,23 @@ defmodule Resuelve.Helpers.JugadorHelper do
   end
 
 
-  def get_goles_de_equipo(  ) do
-
+  @spec get_alcance_global( map() ) :: float()
+  def get_alcance_global( %Jugador{alcance_ind: single_comp, alcance_team: team_comp } ) do
+    (single_comp + team_comp) / 2
   end
 
+  @spec calculate_bonus_part( float(), map() ) :: float()
+  def calculate_bonus_part( global_compliance, %Jugador{bono: bonus} ) do
+    bonus * global_compliance/100
+  end
 
-  def get_alcance_global( jugador=%Jugador{} ) do
-    JugadorHelper.get_scored_goals jugador
-    Jugador.get_level(jugador) |> Jugador.get_goal_goals
-
-
+  def calculate_salary( jugador = %Jugador{sueldo: salary, bono: bonus} ) when bonus >0 do
+    global_comp = jugador |> get_alcance_global
+    final_bonus = calculate_bonus_part( global_comp, jugador )
+    salary + final_bonus
+  end
+  def calculate_salary( jugador = %Jugador{sueldo: salary} ) do
+    salary
   end
 
 end

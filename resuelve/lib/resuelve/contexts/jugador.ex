@@ -1,6 +1,5 @@
 defmodule Resuelve.Context.Jugador do
   defstruct [
-    id: nil,
     nombre: "",
     nivel: "",
     goles: 0,
@@ -8,7 +7,7 @@ defmodule Resuelve.Context.Jugador do
     bono: 0,
     sueldo_completo: nil,
     equipo: "",
-    goles_min: nil,
+    goles_minimos: nil,
     alcance_ind: nil,
     alcance_team: nil
 
