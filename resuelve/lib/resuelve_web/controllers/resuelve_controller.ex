@@ -9,58 +9,29 @@ defmodule ResuelveWeb.ResuelveController do
 	@spec calculate_salaries( map(), map()  ) :: map()
 	def calculate_salaries(conn, %{"jugadores" => jugadores } ) do
 
-		result = Enum.map( jugadores , fn(player) ->
+		raw_players = Enum.map( jugadores , fn(player) ->
 			JugadorHelper.jugador_builder( player )
 		end )
 
-		jugadores_con_bono = Enum.map(result, fn jugador ->
-
-			goles_min = jugador	|> JugadorHelper.get_level |> JugadorHelper.get_goal_goals
-			jugador = Map.put( jugador, :goles_minimos, goles_min )
-
-			alc_ind = JugadorHelper.calcula_alcance_individual(jugador)
-
-			Map.put(jugador, :alcance_ind, alc_ind)
-
+		players_with_min_goals = Enum.map(raw_players, fn jugador ->
+			jugador = JugadorHelper.get_player_goals_goal( jugador )
+			JugadorHelper.get_single_compliance(jugador)
 		end )
 
-		por_equipo = Enum.group_by(jugadores_con_bono, fn(jugador)->jugador.equipo end)
-		equipos = Map.keys( por_equipo )
-		#IO.inspect(equipos, label: "Equipos")
+		by_team = Enum.group_by(players_with_min_goals, fn(jugador)->jugador.equipo end)
+		teams = Map.keys( by_team )
 
-		resultados_equipos = Enum.map( equipos, fn(equipo)->
-			jugadores_team = Map.fetch!(por_equipo, equipo)
-
-			team_goal = jugadores_team |> EquiposHelper.get_scored_and_goal_goals_team |> EquiposHelper.get_team_compliance
-
-			Enum.map( jugadores_team, fn(jugador)->
-				Map.put( jugador, :alcance_team, team_goal )
-			end )
+		#To parallelize:
+		team_results = Enum.map( teams, fn(equipo)->
+			players_current_team = Map.fetch!(by_team, equipo)
+			EquiposHelper.get_team_compliance(players_current_team)
 		end )
 
-		jugadores_detalles = List.flatten( resultados_equipos )
-		#IO.inspect(jugadores_detalles, label: "Resultados Equipos")
-		jugadores_pago = Enum.map( jugadores_detalles, fn jugador ->
-			salary = JugadorHelper.calculate_salary( jugador )
-			Map.put(jugador, :sueldo_completo, salary)
-		end)
-		IO.inspect(jugadores_pago, label: "Jugadores con sueldo")
+		players_details = List.flatten( team_results )
+		players_with_salary = JugadorHelper.get_final_salary_players( players_details )
 
-		final_players = Enum.map( jugadores_pago, fn jugador ->
-			Map.take( jugador, [:nombre,
-													:nivel,
-													:goles_minimos,
-													:goles,
-													:sueldo,
-													:bono,
-													:sueldo_completo,
-													:equipo ]
-			)
-		end)
-
-
-
-		json(conn, %{ok: true ,id: "Hey...", status_code: 200, body: final_players})
+		final_players = JugadorHelper.format_output_players( players_with_salary )
+		json(conn, %{ok: true, status_code: 200, jugadores: final_players})
 
 	end
 end
