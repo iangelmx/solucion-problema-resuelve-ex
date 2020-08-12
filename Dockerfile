@@ -1,17 +1,19 @@
-# ./Dockerfile
 
-# Extend from the official Elixir image
 FROM elixir:latest
 
-# Create app directory and copy the Elixir projects into it
+RUN apt-get update && \
+    apt-get install -y inotify-tools && \
+    apt-get install -y nodejs && \
+    curl -L https://npmjs.org/install.sh | sh && \
+    mix local.hex --force && \
+    mix archive.install hex phx_new 1.5.4 --force && \
+    mix local.rebar --force
+
 RUN mkdir /app
 COPY ./resuelve /app
 WORKDIR /app
 
-# Install hex package manager
-# By using --force, we don’t need to type “Y” to confirm the installation
-RUN mix local.hex --force
-
 # Compile the project
-#RUN mix do compile
+RUN mix deps.get
+RUN mix do compile
 CMD ["mix", "phx.server"]

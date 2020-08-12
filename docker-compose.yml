@@ -3,22 +3,5 @@ version: "3"
 services:
   phoenix:
     build: .
-    volumes:
-      - ./src:/app
     ports:
-      - "4000:4000"
-    depends_on:
-      - db
-  db:
-    image: mariadb:10.5.4
-    environment:
-        MYSQL_DATABASE: 
-        DB_USERNAME: 
-        MYSQL_ROOT_PASSWORD: 
-    restart: always
-    volumes:
-        - "./data:/var/lib/mysql"
-    ports:
-        - "3306:3306"
-
-    
+      - "4000:4000"    
