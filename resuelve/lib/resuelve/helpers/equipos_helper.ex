@@ -37,6 +37,7 @@ defmodule Resuelve.Helpers.EquiposHelper do
     0
   end
 
+  #Tail call recursion <- delete last
   @spec get_team_compliance( list( map() ) ) :: list()
   def get_team_compliance( team_players ) do
     team_goal = team_players |> get_scored_and_goal_goals_team |> calculate_team_compliance

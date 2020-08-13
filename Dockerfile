@@ -13,6 +13,9 @@ RUN mkdir /app
 COPY ./resuelve /app
 WORKDIR /app
 
+RUN cd /app/assets npm && \
+    npm install
+
 # Compile the project
 RUN mix deps.get
 RUN mix do compile

@@ -6,6 +6,8 @@ defmodule ResuelveWeb.ResuelveController do
 
 	#Patern matching
 	#Documentación -> Spec's
+	#Add with struct
+	# Test only helpers
 	@spec calculate_salaries( map(), map()  ) :: map()
 	def calculate_salaries(conn, %{"jugadores" => jugadores } ) do
 
