@@ -8,7 +8,7 @@ use Mix.Config
 config :resuelve, Resuelve.Repo,
   username: "root",
   password: "root",
-  database: "resuelve_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "resuelve_dev", #test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
