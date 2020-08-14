@@ -5,7 +5,6 @@ defmodule Resuelve.Level do
   schema "levels" do
     field :level, :string
     field :min_goals, :integer
-
     timestamps()
   end
 
