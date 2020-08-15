@@ -147,8 +147,7 @@ defmodule Resuelve.Helpers.JugadorHelper do
 			EquiposHelper.get_team_compliance(players_current_team)
 		end )
 
-    players_details = List.flatten( team_results )
-    calculate_final_salary_players( players_details )
+    List.flatten( team_results ) |> calculate_final_salary_players
   end
 
 

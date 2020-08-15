@@ -50,6 +50,7 @@ defmodule Resuelve.Helpers.LevelHelper do
 		[:error]
 	end
 
+	@spec delete_received_levels( list( map() ) ) :: list( atom() )
 	def delete_received_levels( levels_list ) do
 		Enum.map( levels_list, fn(level) ->
 			level_db = Repo.get_by!(LevelDB, level: level["nivel"])

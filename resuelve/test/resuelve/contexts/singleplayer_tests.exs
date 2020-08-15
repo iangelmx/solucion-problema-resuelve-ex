@@ -171,6 +171,7 @@ defmodule Resuelve.SingleplayerTests do
   test "Getting the complete salary for a single player with negative salary" do
     input = %Jugador{bono: 5980, sueldo: -4198048, alcance_ind: 100, alcance_team: 100}
     simulation_res = 10000
+    #quit nil
     assert JugadorHelper.calculate_salary( input ) == nil
   end
 
