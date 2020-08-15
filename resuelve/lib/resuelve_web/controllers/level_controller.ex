@@ -12,14 +12,12 @@ defmodule ResuelveWeb.LevelController do
 	end
 
 	def create(conn, %{"niveles" => levels }) do
-		raw_levels = Enum.map( levels , fn(level) ->
-				IO.inspect(level, label: "Level received")
-				LevelHelper.level_builder( level )
-		end )
+		saved = LevelHelper.save_new_levels( levels )
+		json(conn, %{ok: saved, status_code: 200, description: "Updated"})
+	end
 
-		new = LevelHelper.save_new_levels( raw_levels )
+	def update(conn, %{"niveles" => levels}) do
 
-		json(conn, %{ok: true, status_code: 200, levels: new})
-
+		json(conn, %{ok: "OK", status_code: 200, description: "Updated"})
 	end
 end

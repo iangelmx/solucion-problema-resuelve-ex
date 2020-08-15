@@ -13,5 +13,6 @@ defmodule Resuelve.Level do
     level
     |> cast(attrs, [:level, :min_goals])
     |> validate_required([:level, :min_goals])
+    |> unique_constraint([:level])
   end
 end

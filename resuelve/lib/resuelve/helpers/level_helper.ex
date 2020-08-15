@@ -15,15 +15,22 @@ defmodule Resuelve.Helpers.LevelHelper do
 	@spec get_current_levels() :: list( %Level{} )
 	def get_current_levels() do
 		import Ecto.Query
-		query = from l in Level ,select: [l.level, l.min_goals]
+		query = from l in LevelDB ,select: [l.level, l.min_goals]
 		Repo.all(query)
 	end
 
 	def save_new_levels( level_lists ) when length(level_lists)>0 do
-		import Ecto.Query
 		Enum.each( level_lists, fn(level) ->
-			LevelDB.changeset(level) |> Repo.insert_or_update
+			LevelDB.changeset( %LevelDB{}, %{level: level["nivel"], min_goals: level["goles_minimos"]} ) |> Repo.insert_or_update
 		end)
+	end
+	def save_new_levels( _level_lists ) do
+		:error
+	end
+
+
+	def update_received_levels(  ) do
+
 	end
 
 
