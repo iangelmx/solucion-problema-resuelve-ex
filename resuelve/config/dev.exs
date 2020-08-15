@@ -3,9 +3,9 @@ use Mix.Config
 # Configure your database
 config :resuelve, Resuelve.Repo,
   username: "root",
-  password: "",
+  password: "root",
   database: "resuelve_dev",
-  hostname: "localhost",
+  hostname: "localhost", #"myapp-mariadb",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 

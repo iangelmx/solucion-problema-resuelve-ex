@@ -9,7 +9,7 @@ defmodule Resuelve.Context.Jugador do
     equipo: "",
     goles_minimos: nil,
     alcance_ind: nil,
-    alcance_team: nil
-
+    alcance_team: nil,
+    failed: false
   ]
 end
