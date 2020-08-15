@@ -13,6 +13,6 @@ defmodule Resuelve.Level do
     level
     |> cast(attrs, [:level, :min_goals])
     |> validate_required([:level, :min_goals])
-    |> unique_constraint([:level])
+    |> unique_constraint(:level, message: "Account number must be unique or some message like that")
   end
 end

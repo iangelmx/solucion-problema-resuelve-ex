@@ -24,7 +24,9 @@ defmodule ResuelveWeb.Router do
   scope "/api", ResuelveWeb do
     pipe_through :api
     post "/calculate-player-salaries", ResuelveController, :calculate_salaries
-    resources "/levels", LevelController, only: [:index, :update, :delete, :create]
+    resources "/levels", LevelController, only: [:index, :create]
+    put "/levels", LevelController, :update
+    delete "/levels", LevelController, :delete
   end
 
   # Other scopes may use custom stacks.

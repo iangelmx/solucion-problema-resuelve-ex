@@ -11,13 +11,23 @@ defmodule ResuelveWeb.LevelController do
 		json(conn, %{ok: true, status_code: 200, levels: levels})
 	end
 
+	@spec create( map(), map() ) :: map()
 	def create(conn, %{"niveles" => levels }) do
 		saved = LevelHelper.save_new_levels( levels )
-		json(conn, %{ok: saved, status_code: 200, description: "Updated"})
+		result = Enum.all?( saved, fn(x)-> x == :ok end )
+		json(conn, %{ok: result, status_code: 200, description: %{levels_created: saved}})
 	end
 
+	@spec update( map(), map() ) :: map()
 	def update(conn, %{"niveles" => levels}) do
+		updated = LevelHelper.update_received_levels( levels )
+		result = Enum.all?( updated, fn(x)-> x == :ok end )
+		json(conn, %{ok: result, status_code: 200, description: %{levels_updated: updated}})
+	end
 
-		json(conn, %{ok: "OK", status_code: 200, description: "Updated"})
+	def delete( conn, %{"niveles" => levels} ) do
+		deleted = LevelHelper.delete_received_levels( levels )
+		result = Enum.all?( deleted, fn(x)-> x == :ok end )
+		json(conn, %{ok: result, status_code: 200, description: %{levels_updated: deleted}})
 	end
 end
