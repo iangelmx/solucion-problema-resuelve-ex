@@ -51,13 +51,12 @@ defmodule ResuelveWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
 
-  #plug :introspect
+  # plug :introspect
   plug ResuelveWeb.Router
 
+  # plug ResuelveWeb.Router
 
-  #plug ResuelveWeb.Router
-
-  #def introspect(conn, _opts) do
+  # def introspect(conn, _opts) do
   #  IO.puts """
   #  Verb: #{inspect(conn.method)}
   #  Host: #{inspect(conn.host)}
@@ -65,6 +64,5 @@ defmodule ResuelveWeb.Endpoint do
   #  """
   #
   #  conn
-  #end
-
+  # end
 end
