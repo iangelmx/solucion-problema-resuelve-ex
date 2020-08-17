@@ -6,12 +6,12 @@ defmodule Resuelve.Helpers.PlayerHelper do
   @spec get_minimum_player_goals( map(), charlist()|nil ) :: integer()
   def get_minimum_player_goals( players, team_name) do
     Enum.map( players, fn(player) ->
-      min_goals = LevelManager.get_minimum_goals_by_level( player.level, team_name )
+      min_goals = LevelManager.get_minimum_goals_by_level( player.nivel, team_name )
       Map.put(player, :min_goals, min_goals)
     end)
   end
 
-  @spec calculate_complete_salary_for_players( map() ) :: float()
+  @spec calculate_single_compliance_player( map() ) :: float()
   def calculate_single_compliance_player( %{goles: goles, min_goals: min_goals} ) when goles >= min_goals do
     100.0
   end
@@ -37,11 +37,14 @@ defmodule Resuelve.Helpers.PlayerHelper do
   def calculate_teams_compliance( players ) do
     by_team = Enum.group_by( players, fn(player) -> player.equipo end)
     teams = Map.keys( by_team )
+    #IO.inspect(by_team, label: "By team")
+    #IO.inspect(teams, label: "Teams")
     Enum.map( teams, fn(team) ->
-      Map.fetch( by_team, team )
+      IO.inspect( team, label: "Current team")
+      Map.fetch!( by_team, team )
       |> TeamHelper.calculate_compliance_by_team
     end )
-    by_team
+
   end
 
   def calculate_global_compliance( players, team_name) do

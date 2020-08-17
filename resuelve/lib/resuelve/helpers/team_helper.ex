@@ -8,7 +8,8 @@ defmodule Resuelve.Helpers.TeamHelper do
   end
 
   def calculate_compliance_by_team( players_team ) do
-    scored_goals = get_scored_goals_by_team( players_team )
+    get_scored_goals_by_team( players_team )
+    #IO.inspect()
   end
 
 end
