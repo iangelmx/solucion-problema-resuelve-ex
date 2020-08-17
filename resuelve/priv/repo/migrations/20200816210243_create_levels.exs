@@ -10,6 +10,5 @@ defmodule Resuelve.Repo.Migrations.CreateLevels do
     end
 
     create unique_index(:levels, [:level_name, :team_name], name: :index_unique_level_by_team)
-
   end
 end

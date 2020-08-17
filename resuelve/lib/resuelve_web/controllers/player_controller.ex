@@ -1,14 +1,21 @@
 defmodule ResuelveWeb.PlayerController do
   use ResuelveWeb, :controller
   alias Resuelve.Helpers.PlayerHelper
+  alias Resuelve.Helpers.SanitizePlayerHelper
 
-  def calculate_salary(conn, %{"jugadores" => raw_players}) do
-    player_list = PlayerHelper.sanitize_raw_player( raw_players )
-    IO.inspect( elem(player_list, 1), label: "To return" )
-    with {:ok, _} <- player_list do
-      json(conn, %{ok: true, status_code: 200, description: "Deployed", received: raw_players})
-    else
-      _err -> json(conn, %{ok: false, status_code: 400, description: elem(player_list, 1)})
+  @spec calculate_salary(Plug.Conn.t(), map()) :: map()
+  def calculate_salary(conn, params) do
+    player_list = SanitizePlayerHelper.sanitize_raw_player(params["jugadores"])
+    team_name = params["equipo"]
+    with %{ok: players, errors: players_with_errors} <- player_list do
+      # Calculate players
+      players_with_salary = PlayerHelper.calculate_complete_salary_for_players(players,team_name)
+
+      json(conn, %{
+        ok: true,
+        status_code: 200,
+        description: %{successfull: players, with_errors: players_with_errors}
+      })
     end
   end
 end
