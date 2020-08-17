@@ -19,10 +19,12 @@ defmodule ResuelveWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ResuelveWeb do
-  #   pipe_through :api
-  # end
+  #Other scopes may use custom stacks.
+  scope "/api", ResuelveWeb do
+    pipe_through :api
+
+    post "/players/calculate-salary", PlayerController, :calculate_salary
+  end
 
   # Enables LiveDashboard only for development
   #
