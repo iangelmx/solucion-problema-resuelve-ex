@@ -17,22 +17,14 @@ defmodule ResuelveWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
-    get "/hello", HelloController, :index
-    get "/hello/:messenger", HelloController, :show
-  end
-
-  scope "/api", ResuelveWeb do
-    pipe_through :api
-    post "/calculate-player-salaries", ResuelveController, :calculate_salaries
-    resources "/levels", LevelController, only: [:index, :create]
-    put "/levels", LevelController, :update
-    delete "/levels", LevelController, :delete
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ResuelveWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ResuelveWeb do
+    pipe_through :api
+
+    post "/players/calculate-salary", PlayerController, :calculate_salary
+  end
 
   # Enables LiveDashboard only for development
   #
