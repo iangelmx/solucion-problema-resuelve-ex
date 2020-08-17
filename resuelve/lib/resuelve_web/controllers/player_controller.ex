@@ -10,11 +10,10 @@ defmodule ResuelveWeb.PlayerController do
     with %{ok: players, errors: players_with_errors} <- player_list do
       # Calculate players
       players_with_salary = PlayerHelper.calculate_complete_salary_for_players(players,team_name)
-
       json(conn, %{
         ok: true,
         status_code: 200,
-        description: %{successfull: players, with_errors: players_with_errors}
+        description: %{successfull: players_with_salary, with_errors: players_with_errors}
       })
     end
   end
