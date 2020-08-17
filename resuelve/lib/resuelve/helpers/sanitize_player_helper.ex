@@ -121,13 +121,16 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
                have_correct_values?(elem(players_with_attrs, 2)) do
           %{
             ok: correct_players,
-            errors: %{invalid_values: failed_players, missing_attributes: elem(players_with_attrs, 1)}
+            errors: %{
+              invalid_values: failed_players,
+              missing_attributes: elem(players_with_attrs, 1)
+            }
           }
         end
     end
   end
+
   def sanitize_raw_player(_) do
     {:error, "Se ha recibido una lista vacía de jugadores"}
   end
-
 end
