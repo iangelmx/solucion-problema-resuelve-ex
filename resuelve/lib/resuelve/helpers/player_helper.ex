@@ -3,19 +3,19 @@ defmodule Resuelve.Helpers.PlayerHelper do
   alias Resuelve.Helpers.TeamHelper
 
 
-  @spec get_minimum_player_goals( map(), charlist()|nil ) :: integer()
+  @spec get_minimum_player_goals( list(map()), charlist()|nil ) :: list(map())
   def get_minimum_player_goals( player_list, team_name) do
     Enum.map( player_list, fn(player) ->
       min_goals = LevelManager.get_minimum_goals_by_level( player.nivel, team_name )
-      Map.put(player, :min_goals, min_goals)
+      Map.put(player, :goles_minimos, min_goals)
     end)
   end
 
   @spec calculate_single_compliance_player( map() ) :: float()
-  def calculate_single_compliance_player( %{goles: goles, min_goals: min_goals} ) when goles >= min_goals do
+  def calculate_single_compliance_player( %{goles: goles, goles_minimos: min_goals} ) when goles >= min_goals do
     100.0
   end
-  def calculate_single_compliance_player( %{goles: goles, min_goals: min_goals} ) when goles < min_goals when min_goals > 0 do
+  def calculate_single_compliance_player( %{goles: goles, goles_minimos: min_goals} ) when goles < min_goals when min_goals > 0 do
     goles * 100 / min_goals
   end
   def calculate_single_compliance_player( _player )do
@@ -31,7 +31,7 @@ defmodule Resuelve.Helpers.PlayerHelper do
     end)
   end
 
-  @spec calculate_complete_salary_for_players( map(), charlist()|nil) :: list( map() )
+  @spec calculate_teams_compliance( list(map()) ) :: list( map() )
   def calculate_teams_compliance( player_list ) do
     by_team = Enum.group_by( player_list, fn(player) -> player.equipo end)
     teams = Map.keys( by_team )
@@ -95,13 +95,9 @@ defmodule Resuelve.Helpers.PlayerHelper do
 
   @spec calculate_complete_salary_for_players(list(map()), charlist()|nil) :: list()
   def calculate_complete_salary_for_players(player_list, team_name) do
-    IO.puts("HEy...")
-    # Enum.map(player_list)
-    # Calcula alcance global
     get_global_compliance_players( player_list, team_name )
     |> get_final_salary
     |> format_output
-
   end
 
 end

@@ -1,10 +1,13 @@
 defmodule Resuelve.Helpers.TeamHelper do
 
+  @spec get_scored_goals_by_team(list(map())) :: float()
   def get_scored_goals_by_team( players_team ) do
     Enum.reduce( players_team, 0, fn player, acc -> player.goles + acc end )
   end
+
+  @spec get_minimum_goals_by_team(list(map())) :: float()
   def get_minimum_goals_by_team( players_team ) do
-    Enum.reduce( players_team, 0, fn player, acc -> player.min_goals + acc end )
+    Enum.reduce( players_team, 0, fn player, acc -> player.goles_minimos + acc end )
   end
 
   @spec calculate_complicance_by_team(integer(), integer()) :: float
