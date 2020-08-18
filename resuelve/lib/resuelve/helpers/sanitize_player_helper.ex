@@ -45,6 +45,10 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     end
   end
 
+  def check_attrs_players(_raw_players) do
+    {:error, [], []}
+  end
+
   @spec valid_level(charlist()) :: tuple
   def valid_level(level) when is_bitstring(level) and not is_nil(level), do: {:ok, level}
   def valid_level(_level), do: {:error, "'nivel' debería ser una cadena de caracteres"}
@@ -93,12 +97,16 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
   end
 
   @spec have_correct_values?(list(map())) :: map()
-  def have_correct_values?(player_list) do
+  def have_correct_values?(players_list) when length(players_list) > 0 do
     separated_players =
-      Enum.map(player_list, fn player -> valid_values(player) end)
+      Enum.map(players_list, fn player -> valid_values(player) end)
       |> Enum.group_by(fn player -> player.status end)
 
     %{with_errors: separated_players["failed"], correct: separated_players["ok"]}
+  end
+
+  def have_correct_values?(_players_list) do
+    %{with_errors: %{info: "Entrada inválida"}, correct: []}
   end
 
   @spec sanitize_raw_player(list(map)) :: map()
@@ -126,6 +134,6 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
   end
 
   def sanitize_raw_player(_) do
-    {:error, "Se ha recibido una lista vacía de jugadores"}
+    %{error: "Se ha recibido una lista vacía de jugadores"}
   end
 end

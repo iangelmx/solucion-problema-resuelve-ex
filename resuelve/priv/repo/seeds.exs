@@ -15,3 +15,6 @@ Repo.insert!(%Level{level_name: "A", min_goals: 5, team_name: "Resuelve FC"})
 Repo.insert!(%Level{level_name: "B", min_goals: 10, team_name: "Resuelve FC"})
 Repo.insert!(%Level{level_name: "C", min_goals: 15, team_name: "Resuelve FC"})
 Repo.insert!(%Level{level_name: "Cuauh", min_goals: 20, team_name: "Resuelve FC"})
+
+Repo.insert!(%Level{level_name: "A1", min_goals: 10, team_name: "Test FC"})
+Repo.insert!(%Level{level_name: "A2", min_goals: 20, team_name: "Test FC"})
