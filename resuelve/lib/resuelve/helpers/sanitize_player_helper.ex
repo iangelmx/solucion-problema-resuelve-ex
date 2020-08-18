@@ -27,31 +27,26 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     end
   end
 
-  @spec get_missing_keys_in_players(list(map())) :: list()
+  @spec get_missing_keys_in_players(list(map())) :: map()
   def get_missing_keys_in_players(raw_players) when length(raw_players) > 0 do
     raw_players
     |> Enum.map(fn player -> check_necessary_attrs(player) end)
-    |> Enum.filter(fn player -> player.status == :error end)
+    |> Enum.group_by(fn player -> player.status end)
   end
 
-  @spec quit_error_players(list(map()), list(map())) :: list
-  def quit_error_players(complete_list, bad_formated_players) do
-    complete_list -- Enum.map(bad_formated_players, fn player -> player.data end)
-  end
+  @spec check_attrs_players(list(map())) :: tuple()
+  def check_attrs_players(raw_players) when length(raw_players) > 0 do
+    validated_req_keys = get_missing_keys_in_players(raw_players)
 
-  @spec check_attrs_player(list(map())) :: tuple()
-  def check_attrs_player(raw_players) when length(raw_players) > 0 do
-    with_problems = get_missing_keys_in_players(raw_players)
-
-    if length(with_problems) > 0 do
-      {:error, with_problems, quit_error_players(raw_players, with_problems)}
+    if Map.has_key?(validated_req_keys, :error) == true do
+      {:error, validated_req_keys[:error], validated_req_keys[:ok]}
     else
       {:ok, true, raw_players}
     end
   end
 
   @spec valid_level(charlist()) :: tuple
-  def valid_level(level) when is_bitstring(level), do: {:ok, level}
+  def valid_level(level) when is_bitstring(level) and not is_nil(level), do: {:ok, level}
   def valid_level(_level), do: {:error, "'nivel' debería ser una cadena de caracteres"}
 
   @spec valid_goals(number()) :: tuple()
@@ -59,15 +54,15 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
   def valid_goals(_goals), do: {:error, "'goles' debería ser un entero positivo"}
 
   @spec valid_sueldo(number()) :: tuple()
-  def valid_sueldo(salary) when salary > 0, do: {:ok, salary}
+  def valid_sueldo(salary) when salary > 0 and is_number(salary), do: {:ok, salary}
   def valid_sueldo(_salary), do: {:error, "'sueldo' debería ser una cifra positiva"}
 
   @spec valid_bonus(number()) :: tuple()
-  def valid_bonus(bonus) when bonus > 0, do: {:ok, bonus}
+  def valid_bonus(bonus) when bonus > 0 and is_number(bonus), do: {:ok, bonus}
   def valid_bonus(_bonus), do: {:error, "'bono' debería ser una cifra positiva"}
 
   @spec valid_team(charlist()) :: tuple()
-  def valid_team(team) when is_bitstring(team), do: {:ok, team}
+  def valid_team(team) when is_bitstring(team) and not is_nil(team), do: {:ok, team}
   def valid_team(_team), do: {:error, "'equipo' debería ser una cadena de caracteres"}
 
   # How to carry errors to valid values ELSE with?
@@ -108,7 +103,7 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
 
   @spec sanitize_raw_player(list(map)) :: map()
   def sanitize_raw_player(raw_players) when length(raw_players) > 0 do
-    players_with_attrs = check_attrs_player(raw_players)
+    players_with_attrs = check_attrs_players(raw_players)
 
     with {:ok, _, players} <- players_with_attrs do
       with %{with_errors: failed_players, correct: correct_players} <-
