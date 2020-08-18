@@ -3,6 +3,7 @@ defmodule Resuelve.Contexts.LevelManager do
   alias Resuelve.Repo
   # alias Resuelve.Level, as: LevelDB
 
+  @spec get_minimum_goals_by_level(charlist(), charlist() | nil) :: number()
   def get_minimum_goals_by_level(level, team) when team != "" and team != nil do
     result = Repo.get_by(Level, level_name: level, team_name: team)
 
