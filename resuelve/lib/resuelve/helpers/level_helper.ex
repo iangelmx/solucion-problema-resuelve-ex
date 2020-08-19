@@ -1,4 +1,10 @@
 defmodule Resuelve.Helpers.LevelHelper do
+  @moduledoc """
+  This module contains all the helpers to retrieve, and save info
+  to persist accross the LevelManager.
+  """
+  @moduledoc since: "1.0.0"
+
   alias Resuelve.Contexts.Level
   alias Resuelve.Contexts.LevelManager
 

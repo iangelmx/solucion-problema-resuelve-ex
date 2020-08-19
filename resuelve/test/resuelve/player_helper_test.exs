@@ -17,7 +17,7 @@ defmodule Resuelve.PlayerHelperTest do
       %{nivel: "C", goles_minimos: 15}
     ]
 
-    assert PlayerHelper.get_min_player_goals(input_p, input_t) == simulation_output
+    assert PlayerHelper.put_n_get_min_player_goals(input_p, input_t) == simulation_output
 
     # When it is not stipulated the team, it assumes is Resuelve FC
     # When some of the levels are not registered
@@ -45,7 +45,7 @@ defmodule Resuelve.PlayerHelperTest do
       }
     ]
 
-    assert PlayerHelper.get_min_player_goals(input_p, input_t) == simulation_output
+    assert PlayerHelper.put_n_get_min_player_goals(input_p, input_t) == simulation_output
 
     # When team is different of Resuelve FC and not nil
     # When all of the levels are registered
@@ -67,7 +67,7 @@ defmodule Resuelve.PlayerHelperTest do
       %{nivel: "A2", goles_minimos: 20}
     ]
 
-    assert PlayerHelper.get_min_player_goals(input_p, input_t) == simulation_output
+    assert PlayerHelper.put_n_get_min_player_goals(input_p, input_t) == simulation_output
 
     # When team is different of Resuelve FC, registered and not nil
     # When some levels are not registered
@@ -89,7 +89,7 @@ defmodule Resuelve.PlayerHelperTest do
       %{nivel: "A2", goles_minimos: 20}
     ]
 
-    assert PlayerHelper.get_min_player_goals(input_p, input_t) == simulation_output
+    assert PlayerHelper.put_n_get_min_player_goals(input_p, input_t) == simulation_output
 
     # When team is different of Resuelve FC and its not registered and not nil
     # When some levels are not registered
@@ -111,7 +111,7 @@ defmodule Resuelve.PlayerHelperTest do
       {:error, "Nivel no registrado en el equipo #{input_t} para jugador "}
     ]
 
-    assert PlayerHelper.get_min_player_goals(input_p, input_t) == simulation_output
+    assert PlayerHelper.put_n_get_min_player_goals(input_p, input_t) == simulation_output
   end
 
   test "Calculating the individual compliance of a player" do
@@ -275,17 +275,17 @@ defmodule Resuelve.PlayerHelperTest do
     input = %{individual_compliance: 100.0, team_compliance: 100.0}
     simulation_output = 100.0
 
-    assert PlayerHelper.put_global_comp_in_players_single_player(input) == simulation_output
+    assert PlayerHelper.calc_global_comp_single_player(input) == simulation_output
 
     input = %{individual_compliance: 100, team_compliance: 90}
     simulation_output = 95.0
 
-    assert PlayerHelper.put_global_comp_in_players_single_player(input) == simulation_output
+    assert PlayerHelper.calc_global_comp_single_player(input) == simulation_output
 
     input = %{individual_compliance: 0, team_compliance: 50}
     simulation_output = 25.0
 
-    assert PlayerHelper.put_global_comp_in_players_single_player(input) == simulation_output
+    assert PlayerHelper.calc_global_comp_single_player(input) == simulation_output
   end
 
   test "Getting the global compliance for a players groups" do

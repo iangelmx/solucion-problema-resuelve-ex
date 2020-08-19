@@ -5,8 +5,8 @@ config :resuelve, Resuelve.Repo,
   username: "root",
   password: "root",
   database: "resuelve_dev",
-  # hostsname: "myapp-mariadb",
-  hostname: "localhost",
+  hostname: "myapp-mariadb",
+  #hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 

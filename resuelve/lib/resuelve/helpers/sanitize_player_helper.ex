@@ -1,9 +1,22 @@
 defmodule Resuelve.Helpers.SanitizePlayerHelper do
+  @moduledoc """
+  This module is created to contener la mayor parte de los casos que podrían
+  hacer fallar al aplicativo.
+  """
+  @moduledoc since: "1.0.0"
+
+  @doc """
+  Check if a `player` has the required keys values to be processed.
+  Returns a list with the missing keys-values
+  """
   @spec get_missing_keys_for_player(map()) :: list()
   def get_missing_keys_for_player(player) do
     ["nivel", "goles", "sueldo", "bono", "equipo"] -- Map.keys(player)
   end
 
+  @doc """
+  # Joins a items `list` and returns it as coma separated values
+  """
   @spec join_list(list()) :: charlist()
   def join_list(list) when length(list) > 0 do
     Enum.join(list, ", ")
@@ -109,6 +122,10 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     %{with_errors: %{info: "Entrada inválida"}, correct: []}
   end
 
+  @doc """
+  Calls to the others functions to sanitize a players list provided in the input
+  Returns a map with the errors and the valid players
+  """
   @spec sanitize_raw_player(list(map)) :: map()
   def sanitize_raw_player(raw_players) when length(raw_players) > 0 do
     players_with_attrs = check_attrs_players(raw_players)
