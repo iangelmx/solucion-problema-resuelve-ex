@@ -8,7 +8,8 @@
 use Mix.Config
 
 config :resuelve,
-  ecto_repos: [Resuelve.Repo]
+  ecto_repos: [Resuelve.Repo],
+  migration_timestamps: [type: :utc_datetime]
 
 # Configures the endpoint
 config :resuelve, ResuelveWeb.Endpoint,

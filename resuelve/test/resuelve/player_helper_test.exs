@@ -613,6 +613,7 @@ defmodule Resuelve.PlayerHelperTest do
         bono: 2647
       }
     ]
+
     input_t = nil
 
     simulation_output = %{
@@ -671,6 +672,7 @@ defmodule Resuelve.PlayerHelperTest do
       errors: nil
     }
 
-    assert PlayerHelper.calculate_complete_salary_for_players(input_p, input_t) == simulation_output
+    assert PlayerHelper.calculate_complete_salary_for_players(input_p, input_t) ==
+             simulation_output
   end
 end

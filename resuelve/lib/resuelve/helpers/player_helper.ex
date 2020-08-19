@@ -119,7 +119,8 @@ defmodule Resuelve.Helpers.PlayerHelper do
   end
 
   @spec put_full_salary_in_players(map()) :: map()
-  def put_full_salary_in_players(%{players: player_list, errors: errors}) when length(player_list) > 0 do
+  def put_full_salary_in_players(%{players: player_list, errors: errors})
+      when length(player_list) > 0 do
     players_salary =
       Enum.map(player_list, fn player ->
         salary = calc_full_salary_single_player(player)

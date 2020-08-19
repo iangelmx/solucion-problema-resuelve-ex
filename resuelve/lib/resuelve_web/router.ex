@@ -24,6 +24,9 @@ defmodule ResuelveWeb.Router do
     pipe_through :api
 
     post "/players/calculate-salary", PlayerController, :calculate_salary
+    resources "/levels", LevelController, only: [:index, :create]
+    put "/levels", LevelController, :update
+    delete "/levels", LevelController, :delete
   end
 
   # Enables LiveDashboard only for development
