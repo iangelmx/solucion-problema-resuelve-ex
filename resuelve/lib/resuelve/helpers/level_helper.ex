@@ -8,6 +8,9 @@ defmodule Resuelve.Helpers.LevelHelper do
   alias Resuelve.Contexts.Level
   alias Resuelve.Contexts.LevelManager
 
+  @doc """
+  Converts a map to a Level structure
+  """
   @spec level_builder(map()) :: %Level{}
   def level_builder(%{"nivel" => level, "goles_minimos" => goles_min, "equipo" => team}) do
     %Level{
@@ -17,14 +20,21 @@ defmodule Resuelve.Helpers.LevelHelper do
     }
   end
 
+  @doc """
+  Retrieve from the database the levels and teams that are already registered
+  """
   @spec get_current_levels :: map()
   def get_current_levels() do
     LevelManager.get_all_levels()
     |> Enum.group_by(fn level -> level.equipo end)
   end
 
-  @spec validate_output(any) :: list()
-  def validate_output(input) do
+  @doc """
+  Controls the output to the controller to display custom responses according
+  the input given to create levels
+  """
+  @spec validate_output_create_levels(any) :: list()
+  def validate_output_create_levels(input) do
     with {num, nil} <- input do
       [{:ok, true}, {:desc, %{levels_created: num}}, {:status, :ok}, {:code, 200}]
     else
@@ -53,6 +63,9 @@ defmodule Resuelve.Helpers.LevelHelper do
     end
   end
 
+  @doc """
+  Save the levels provided from the controller
+  """
   @spec save_new_levels(list(map())) :: list(atom())
   def save_new_levels(levels_list) when length(levels_list) > 0 do
     Enum.map(levels_list, fn lev ->
@@ -67,13 +80,16 @@ defmodule Resuelve.Helpers.LevelHelper do
       }
     end)
     |> LevelManager.insert_new_levels()
-    |> validate_output()
+    |> validate_output_create_levels()
   end
 
   def save_new_levels(_levels_list) do
     [:error]
   end
 
+  @doc """
+  Controls the output to the controller when is trying to update levels
+  """
   @spec validate_output_updates(list()) :: list()
   def validate_output_updates(results) do
     res = Enum.all?(results, fn x -> x == :ok end)
@@ -91,6 +107,9 @@ defmodule Resuelve.Helpers.LevelHelper do
     end
   end
 
+  @doc """
+  Update the levels provided in the input with new minimum goals
+  """
   @spec update_received_levels(list(map())) :: list(atom())
   def update_received_levels(levels_list) when length(levels_list) > 0 do
     Enum.map(levels_list, fn level ->
@@ -109,6 +128,9 @@ defmodule Resuelve.Helpers.LevelHelper do
     [:error]
   end
 
+  @doc """
+  Controls the output to the controller when the user is trying to delete levels
+  """
   @spec validate_output_delete(list()) :: list()
   def validate_output_delete(results) do
     IO.inspect(results, label: "Niveles recibidos")
@@ -127,6 +149,9 @@ defmodule Resuelve.Helpers.LevelHelper do
     end
   end
 
+  @doc """
+  Deletes the provided levels at the input if it exist
+  """
   @spec delete_received_levels(list(map())) :: list()
   def delete_received_levels(levels_list) do
     Enum.map(levels_list, fn level ->
