@@ -22,6 +22,11 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     Enum.join(list, ", ")
   end
 
+  @doc """
+  Check if a single player has the minimum required key-values to calculate his
+  complete salary
+  Returns a map with the status of the player and his data.
+  """
   @spec check_necessary_attrs(map()) :: map()
   def check_necessary_attrs(player) do
     missing_keys = get_missing_keys_for_player(player)
@@ -40,6 +45,10 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     end
   end
 
+  @doc """
+  Check if a players list have the minimum required keys to calculate its salary.
+  Returns a map with the players that have and does not have all the keys
+  """
   @spec get_missing_keys_in_players(list(map())) :: map()
   def get_missing_keys_in_players(raw_players) when length(raw_players) > 0 do
     raw_players
@@ -47,6 +56,11 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     |> Enum.group_by(fn player -> player.status end)
   end
 
+  @doc """
+  Check if a players list have the minimum required keys-values to let them pass
+  Returns a tuple with the status and the players that have the required key
+  values and those that does not have it.
+  """
   @spec check_attrs_players(list(map())) :: tuple()
   def check_attrs_players(raw_players) when length(raw_players) > 0 do
     validated_req_keys = get_missing_keys_in_players(raw_players)
@@ -62,28 +76,53 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
     {:error, [], []}
   end
 
+  @doc """
+  Verify that the `level` has the expected type and value.
+  Returns a tuple with ok and the value or with the error and legend to it.
+  """
   @spec valid_level(charlist()) :: tuple
   def valid_level(level) when is_bitstring(level) and not is_nil(level), do: {:ok, level}
   def valid_level(_level), do: {:error, "'nivel' debería ser una cadena de caracteres"}
 
+  @doc """
+  Verify that the `goals` has the expected type and value.
+  Returns a tuple with ok and the value or with the error and legend to it.
+  """
   @spec valid_goals(number()) :: tuple()
   def valid_goals(goals) when goals > 0 and is_integer(goals), do: {:ok, goals}
   def valid_goals(_goals), do: {:error, "'goles' debería ser un entero positivo"}
 
+  @doc """
+  Verify that the `salary` has the expected type and value.
+  Returns a tuple with ok and the value or with the error and legend to it.
+  """
   @spec valid_sueldo(number()) :: tuple()
   def valid_sueldo(salary) when salary > 0 and is_number(salary), do: {:ok, salary}
   def valid_sueldo(_salary), do: {:error, "'sueldo' debería ser una cifra positiva"}
 
+  @doc """
+  Verify that the `bonus` has the expected type and value.
+  Returns a tuple with ok and the value or with the error and legend to it.
+  """
   @spec valid_bonus(number()) :: tuple()
   def valid_bonus(bonus) when bonus > 0 and is_number(bonus), do: {:ok, bonus}
   def valid_bonus(_bonus), do: {:error, "'bono' debería ser una cifra positiva"}
 
+  @doc """
+  Verify that the `team` has the expected type and value.
+  Returns a tuple with ok and the value or with the error and legend to it.
+  """
   @spec valid_team(charlist()) :: tuple()
   def valid_team(team) when is_bitstring(team) and not is_nil(team), do: {:ok, team}
   def valid_team(_team), do: {:error, "'equipo' debería ser una cadena de caracteres"}
 
   # How to carry errors to valid values ELSE with?
 
+  @doc """
+  Check if the values of a single `player` are the expected to calculate his complete
+  salary.
+  Return an atom map if it has the correct values. Otherwise a map with the error.
+  """
   @spec valid_values(map()) :: map()
   def valid_values(player) do
     with {:ok, level} <- valid_level(player["nivel"]),
@@ -101,14 +140,17 @@ defmodule Resuelve.Helpers.SanitizePlayerHelper do
         nivel: level
       }
     else
-      _err ->
-        %{
+      {:error, legend} -> %{
           status: "failed",
-          error: "El jugador #{player["nombre"]} tiene valores inválidos para calcular su sueldo"
+          error: "El jugador #{player["nombre"]} tiene valores inválidos para calcular su sueldo: #{legend}"
         }
     end
   end
 
+  @doc """
+  Check in a second phase if the players with the required keys have the expected
+  values to let them pass
+  """
   @spec have_correct_values?(list(map())) :: map()
   def have_correct_values?(players_list) when length(players_list) > 0 do
     separated_players =

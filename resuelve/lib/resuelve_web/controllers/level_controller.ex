@@ -1,17 +1,20 @@
 defmodule ResuelveWeb.LevelController do
   alias Resuelve.Helpers.LevelHelper
   use ResuelveWeb, :controller
-  # Patern matching
-  # Documentación -> Spec's
-  # Add with struct
-  # Test only helpers
 
+  @doc """
+  This endpoint is the responsible to show the teams and levels that are alredy
+  registered to calculate salary of its players
+  """
   @spec index(map(), map()) :: map()
   def index(conn, _params) do
     levels = LevelHelper.get_current_levels()
     json(conn, %{ok: true, status_code: 200, levels: levels})
   end
 
+  @doc """
+  Creates new levels or teams with levels in the database
+  """
   @spec create(map(), map()) :: map()
   def create(conn, %{"niveles" => levels}) do
     res = LevelHelper.save_new_levels(levels)
@@ -23,6 +26,9 @@ defmodule ResuelveWeb.LevelController do
     })
   end
 
+  @doc """
+  Update a specific level in a team inside the database
+  """
   @spec update(map(), map()) :: map()
   def update(conn, %{"niveles" => levels}) do
     res = LevelHelper.update_received_levels(levels)
@@ -34,6 +40,9 @@ defmodule ResuelveWeb.LevelController do
     })
   end
 
+  @doc """
+  This endpoint deletes the given levels according it team
+  """
   @spec delete(Plug.Conn.t(), map) :: map()
   def delete(conn, %{"niveles" => levels}) do
     deleted = LevelHelper.delete_received_levels(levels)
