@@ -8,15 +8,16 @@
 use Mix.Config
 
 config :resuelve,
-  ecto_repos: [Resuelve.Repo]
+  ecto_repos: [Resuelve.Repo],
+  migration_timestamps: [type: :utc_datetime]
 
 # Configures the endpoint
 config :resuelve, ResuelveWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "vaUbCd+4gT8USf36QSyX5F9mHUSy/6TV6nlx9yefkSzp5KfDomT8uOgPDJkNTGae",
+  secret_key_base: "xjDJGFKT7ltYTQ/TbfxPuSU/qZXwjSlmhaE3ynIAu6wfaCyeUOs9Gc+fauRaqTFY",
   render_errors: [view: ResuelveWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Resuelve.PubSub,
-  live_view: [signing_salt: "tpfVavHP"]
+  live_view: [signing_salt: "BgWAKfCj"]
 
 # Configures Elixir's Logger
 config :logger, :console,

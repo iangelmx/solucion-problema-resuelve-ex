@@ -7,7 +7,7 @@ defmodule ResuelveWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_resuelve_key",
-    signing_salt: "SF3jKpT9"
+    signing_salt: "EimK+CAF"
   ]
 
   socket "/socket", ResuelveWeb.UserSocket,
@@ -50,21 +50,5 @@ defmodule ResuelveWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-
-  #plug :introspect
   plug ResuelveWeb.Router
-
-
-  #plug ResuelveWeb.Router
-
-  #def introspect(conn, _opts) do
-  #  IO.puts """
-  #  Verb: #{inspect(conn.method)}
-  #  Host: #{inspect(conn.host)}
-  #  Headers: #{inspect(conn.req_headers)}
-  #  """
-  #
-  #  conn
-  #end
-
 end

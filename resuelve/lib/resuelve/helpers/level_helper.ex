@@ -1,63 +1,139 @@
 defmodule Resuelve.Helpers.LevelHelper do
-	alias Resuelve.Level, as: LevelDB
-	alias Resuelve.Context.Level
-	alias Resuelve.{Repo}
+  @moduledoc """
+  This module contains all the helpers to retrieve, and save info
+  to persist accross the LevelManager.
+  """
+  @moduledoc since: "1.0.0"
 
+  alias Resuelve.Contexts.Level
+  alias Resuelve.Contexts.LevelManager
 
-	@spec level_builder( map() ) :: %Level{}
-	def level_builder( %{"nivel" => level ,"goles_minimos" => goles_min } ) do
-		%Level{
-			level: level,
-			min_goals: goles_min,
-		}
-	end
+  @spec level_builder(map()) :: %Level{}
+  def level_builder(%{"nivel" => level, "goles_minimos" => goles_min, "equipo" => team}) do
+    %Level{
+      level_name: level,
+      min_goals: goles_min,
+      team_name: team
+    }
+  end
 
-	@spec retrieve_level_by_name( map() ) :: tuple()
-	def retrieve_level_by_name( level ) when level != "" do
-		level_db = Repo.get_by!(LevelDB, level: level["nivel"])
-		level_to_update = %{id: level_db.id, min_goals: level["goles_minimos"], level: level["nivel"]}
-		{level_db, level_to_update}
-	end
+  @spec get_current_levels :: map()
+  def get_current_levels() do
+    LevelManager.get_all_levels()
+    |> Enum.group_by(fn level -> level.equipo end)
+  end
 
-	@spec get_current_levels() :: list( %Level{} )
-	def get_current_levels() do
-		import Ecto.Query
-		query = from l in LevelDB ,select: [l.level, l.min_goals]
-		Repo.all(query)
-	end
+  @spec validate_output(any) :: list()
+  def validate_output(input) do
+    with {num, nil} <- input do
+      [{:ok, true}, {:desc, %{levels_created: num}}, {:status, :ok}, {:code, 200}]
+    else
+      %MyXQL.Error{mysql: %{name: :ER_DUP_ENTRY}} ->
+        [
+          {:ok, false},
+          {:desc, "Esos niveles ya existen en la BD"},
+          {:status, :conflict},
+          {:code, 409}
+        ]
 
-	@spec save_new_levels( list( map() ) ) :: list( atom() )
-	def save_new_levels( levels_list ) when length(levels_list)>0 do
-		Enum.map( levels_list, fn(level) ->
-			result = LevelDB.changeset( %LevelDB{}, %{level: level["nivel"], min_goals: level["goles_minimos"]} ) |> Repo.insert_or_update
-			elem(result, 0)
-		end)
+      %MyXQL.Error{mysql: %{name: :ER_BAD_NULL_ERROR}} ->
+        [
+          {:ok, false},
+          {:desc, "Entrada inválida, se requiere el nivel, goles mínimos y nombre del equipo."},
+          {:status, :bad_request},
+          {:code, 400}
+        ]
 
-	end
-	def save_new_levels( _levels_list ) do
-		[:error]
-	end
+      %MyXQL.Error{mysql: %{name: :NOT_FOUND}} ->
+        [{:ok, false}, {:desc, "Algún nive no existe."}, {:status, :bad_request}, {:code, 400}]
 
-	@spec update_received_levels( list( map() ) ) :: list( atom() )
-	def update_received_levels( levels_list ) when length(levels_list) > 0 do
-		Enum.map( levels_list, fn(level) ->
-			{level_db, level_to_update} = retrieve_level_by_name( level )
-			result = LevelDB.changeset( level_db, level_to_update ) |> Repo.update
-			elem(result, 0)
-		end)
-	end
-	def update_received_levels( _levels_list ) do
-		[:error]
-	end
+      err ->
+        IO.inspect(err, label: "Excepción...")
+        err
+    end
+  end
 
-	def delete_received_levels( levels_list ) do
-		Enum.map( levels_list, fn(level) ->
-			level_db = Repo.get_by!(LevelDB, level: level["nivel"])
-			level_to_delete = %{id: level_db.id, min_goals: level["goles_minimos"], level: level["nivel"]}
-			result = LevelDB.changeset( level_db, level_to_delete ) |> Repo.update
-			elem(result, 0)
-		end)
-	end
+  @spec save_new_levels(list(map())) :: list(atom())
+  def save_new_levels(levels_list) when length(levels_list) > 0 do
+    Enum.map(levels_list, fn lev ->
+      date = NaiveDateTime.utc_now() |> NaiveDateTime.truncate(:second)
 
+      %{
+        level_name: lev["nivel"],
+        min_goals: lev["goles_minimos"],
+        team_name: lev["equipo"],
+        updated_at: date,
+        inserted_at: date
+      }
+    end)
+    |> LevelManager.insert_new_levels()
+    |> validate_output()
+  end
 
+  def save_new_levels(_levels_list) do
+    [:error]
+  end
+
+  @spec validate_output_updates(list()) :: list()
+  def validate_output_updates(results) do
+    res = Enum.all?(results, fn x -> x == :ok end)
+
+    with true <- res do
+      [{:ok, true}, {:desc, "Niveles actualizados"}, {:status, :ok}, {:code, 200}]
+    else
+      false ->
+        [
+          {:ok, false},
+          {:desc, "Eror al actualizar. Verifica tu entrada"},
+          {:status, :bad_request},
+          {:code, 400}
+        ]
+    end
+  end
+
+  @spec update_received_levels(list(map())) :: list(atom())
+  def update_received_levels(levels_list) when length(levels_list) > 0 do
+    Enum.map(levels_list, fn level ->
+      LevelManager.get_level(%{name: level["nivel"], team: level["equipo"]})
+      |> LevelManager.update_level(%{
+        level_name: level["nivel"],
+        team_name: level["equipo"],
+        min_goals: level["goles_minimos"]
+      })
+      |> elem(0)
+    end)
+    |> validate_output_updates()
+  end
+
+  def update_received_levels(_levels_list) do
+    [:error]
+  end
+
+  @spec validate_output_delete(list()) :: list()
+  def validate_output_delete(results) do
+    IO.inspect(results, label: "Niveles recibidos")
+    res = Enum.all?(results, fn x -> x == :ok end)
+
+    with true <- res do
+      [{:ok, true}, {:desc, "Niveles eliminados"}, {:status, :ok}, {:code, 200}]
+    else
+      false ->
+        [
+          {:ok, false},
+          {:desc, "Eror al eliminar. Verifica tu entrada"},
+          {:status, :bad_request},
+          {:code, 400}
+        ]
+    end
+  end
+
+  @spec delete_received_levels(list(map())) :: list()
+  def delete_received_levels(levels_list) do
+    Enum.map(levels_list, fn level ->
+      LevelManager.get_level(%{name: level["nivel"], team: level["equipo"]})
+      |> LevelManager.delete_level()
+      |> elem(0)
+    end)
+    |> validate_output_delete()
+  end
 end
