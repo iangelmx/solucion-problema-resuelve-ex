@@ -160,11 +160,11 @@ defmodule Resuelve.SourcesTest.Sanitize do
       with_errors: [
         %{
           status: "failed",
-          error: "El jugador 6af19 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 6af19 tiene valores inválidos para calcular su sueldo: 'equipo' debería ser una cadena de caracteres"
         },
         %{
           status: "failed",
-          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
         }
       ],
       correct: [
@@ -184,7 +184,7 @@ defmodule Resuelve.SourcesTest.Sanitize do
   def get_input_have_correct_values_2?() do
     [
       %{
-        "nombre" => "6af19",
+        "nombre" => "6af19F87",
         "nivel" => "B",
         "bono" => 878.4910,
         "equipo" => nil,
@@ -214,15 +214,15 @@ defmodule Resuelve.SourcesTest.Sanitize do
       with_errors: [
         %{
           status: "failed",
-          error: "El jugador 6af19 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 6af19F87 tiene valores inválidos para calcular su sueldo: 'sueldo' debería ser una cifra positiva"
         },
         %{
           status: "failed",
-          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
         },
         %{
           status: "failed",
-          error: "El jugador  tiene valores inválidos para calcular su sueldo"
+          error: "El jugador  tiene valores inválidos para calcular su sueldo: 'sueldo' debería ser una cifra positiva"
         }
       ],
       correct: nil

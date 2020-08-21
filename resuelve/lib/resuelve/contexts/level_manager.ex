@@ -1,8 +1,19 @@
 defmodule Resuelve.Contexts.LevelManager do
+  @moduledoc """
+  This module is the responsible to manage the storage of the levels in the
+  database.
+  """
+  @moduledoc since: "1.0.0"
+
   alias Resuelve.Level
   alias Resuelve.Repo
   # alias Resuelve.Level, as: LevelDB
 
+  @doc """
+  Query to the database what is the minimum goals of a `level` in a certain
+  `level`. When the `team` is not present or is nil, it asumes that is a Resuelve FC
+  level.
+  """
   @spec get_minimum_goals_by_level(charlist(), charlist() | nil) :: tuple()
   def get_minimum_goals_by_level(level, team) when team != "" and team != nil do
     result = Repo.get_by(Level, level_name: level, team_name: team)
@@ -24,6 +35,9 @@ defmodule Resuelve.Contexts.LevelManager do
     end
   end
 
+  @doc """
+  Returns all the teams and levels that are registered on the database
+  """
   @spec get_all_levels() :: map()
   def get_all_levels() do
     import Ecto.Query
@@ -39,6 +53,10 @@ defmodule Resuelve.Contexts.LevelManager do
     )
   end
 
+  @doc """
+  Inserts in to the database a new level if it does not exists.
+  Returns a tuple when its posible to save. Otherwise an exception.
+  """
   @spec insert_new_levels(list(map())) :: tuple
   def insert_new_levels(niveles) do
     try do
@@ -48,6 +66,10 @@ defmodule Resuelve.Contexts.LevelManager do
     end
   end
 
+  @doc """
+  Returns a `%Level{}` by its name and its team name when it exists in the database
+  Other wise, returns an exception
+  """
   @spec get_level(map()) :: %Level{} | %Ecto.NoResultsError{}
   def get_level(%{name: level, team: team}) do
     try do
@@ -57,6 +79,10 @@ defmodule Resuelve.Contexts.LevelManager do
     end
   end
 
+  @doc """
+  Updates a level if it is already registered.
+  Returns a tuple with the :ok or :error atom indicating the status of the update.
+  """
   @spec update_level(%Level{} | %Ecto.NoResultsError{}, map()) :: tuple()
   def update_level(level_db, level_to_update) do
     with level = %Level{} <- level_db do
@@ -66,6 +92,10 @@ defmodule Resuelve.Contexts.LevelManager do
     end
   end
 
+  @doc """
+  Deletes a level from the database if it is already registered
+  Returns a tuple with the :ok or :error atom indicating the status of the deletion.
+  """
   @spec delete_level(%Level{}) :: tuple
   def delete_level(level_db) do
     with level = %Level{} <- level_db do

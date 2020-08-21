@@ -220,7 +220,7 @@ defmodule Resuelve.SanitizePlayerHelperTest do
   test "Testing if values of map are the expected" do
     # When a player has all the required keys in map, but with unexpected values
     input = %{
-      "nombre" => "6af19",
+      "nombre" => "6af19_1",
       "nivel" => "B",
       "bono" => 878.4910,
       "equipo" => 68_519_898,
@@ -230,13 +230,13 @@ defmodule Resuelve.SanitizePlayerHelperTest do
 
     simulation_output = %{
       status: "failed",
-      error: "El jugador #{input["nombre"]} tiene valores inválidos para calcular su sueldo"
+      error: "El jugador #{input["nombre"]} tiene valores inválidos para calcular su sueldo: 'equipo' debería ser una cadena de caracteres"
     }
 
     assert SanitizePlayerHelper.valid_values(input) == simulation_output
 
     input = %{
-      "nombre" => "6af19",
+      "nombre" => "6af19_2",
       "nivel" => 159,
       "bono" => 878.4910,
       "equipo" => "Rojo",
@@ -244,6 +244,10 @@ defmodule Resuelve.SanitizePlayerHelperTest do
       "goles" => 56
     }
 
+    simulation_output = %{
+      status: "failed",
+      error: "El jugador #{input["nombre"]} tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
+    }
     assert SanitizePlayerHelper.valid_values(input) == simulation_output
 
     # When a player has all the required keys and its values are the expected
@@ -308,11 +312,11 @@ defmodule Resuelve.SanitizePlayerHelperTest do
       errors: [
         %{
           status: "failed",
-          error: "El jugador 6af19 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 6af19 tiene valores inválidos para calcular su sueldo: 'equipo' debería ser una cadena de caracteres"
         },
         %{
           status: "failed",
-          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo"
+          error: "El jugador 8319f1af9 tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
         }
       ]
     }
@@ -330,11 +334,11 @@ defmodule Resuelve.SanitizePlayerHelperTest do
         invalid_values: [
           %{
             status: "failed",
-            error: "El jugador  tiene valores inválidos para calcular su sueldo"
+            error: "El jugador  tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
           },
           %{
             status: "failed",
-            error: "El jugador  tiene valores inválidos para calcular su sueldo"
+            error: "El jugador  tiene valores inválidos para calcular su sueldo: 'nivel' debería ser una cadena de caracteres"
           }
         ],
         missing_attributes: [
