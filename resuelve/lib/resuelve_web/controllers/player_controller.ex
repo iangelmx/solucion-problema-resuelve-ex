@@ -3,6 +3,10 @@ defmodule ResuelveWeb.PlayerController do
   alias Resuelve.Helpers.PlayerHelper
   alias Resuelve.Helpers.SanitizePlayerHelper
 
+  @doc """
+  This endpoint is the responsible to accept a list of football players
+  and calculates its complete salary.
+  """
   @spec calculate_salary(Plug.Conn.t(), map()) :: map()
   def calculate_salary(conn, params) do
     player_list = SanitizePlayerHelper.sanitize_raw_player(params["jugadores"])
